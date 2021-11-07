@@ -8,14 +8,14 @@
 </head>
 
 <body>
-   <div id="container">
-      <h1>TODO List:<h1>
-      <input id="new-todo" placeholder="What needs to be done?" autofocus>
-      <button id="add-todo">create</button>
-      <ul id="todo-list"></ul>
+   <div id="app">
+      <h1>Todo List:<h1>
+      <input id="input_todo" placeholder="What needs to be done?" autofocus>
+      <button id="add_todo">create</button>
+      <ul id="todo_list"></ul>
    </div>
 
-   <!-- Template to show a Todo: checkbox + removeButton -->
+   <!-- Template to show a Todo: todoLable + removeButton -->
    <script type="text/template" id="item-template">
       <label><%= title %></label>  <button class="destroy">destroy</button>
    </script>
@@ -64,23 +64,31 @@
 
       // Add TodoView to TodoListView when a model is added to the collection
       app.TodoListView = Backbone.View.extend({
-         el: '#todo-list',
+         el: '#todo_list',
          initialize: function () {
             app.todoList.on('add', function(todo) {
                let todo_view = new app.TodoView({model: todo});
                this.$el.append(todo_view.render().el);
             }, this); // have to add "this" context to get "$el" in the function
+            // Have to bind 'addOneTodoView' with this, otherwise the context of 'add'
+            // callback will be incorrect. So, anonymous function above is recommended.
+            // _.bindAll(this, 'addOneTodoView'); 
+            // app.todoList.on('add', this.addOneTodoView);
          },
+         // addOneTodoView: function(todo) {
+         //    let todo_view = new app.TodoView({model: todo});
+         //    this.$el.append(todo_view.render().el);
+         // }
       });
 
-      // Main View for all view update
+      // App View delegates view update operations to its sub-views
       app.AppView = Backbone.View.extend({
-         el: '#container',
+         el: "#app",
          events: {
-            'click #add-todo': 'addOneTodo',
+            'click #add_todo': 'addOneTodo',
          },
          initialize: function () {
-            this.user_input = this.$('#new-todo');
+            this.user_input = this.$('#input_todo');
             this.todoListView = new app.TodoListView();
          },
          addOneTodo: function (e) {
@@ -89,8 +97,9 @@
                // empty todo tile, do nothing
                return;
             }
-            // "add" event to be triggered on the collection
-            app.todoList.add({ title: todo_title });
+            // "add" event is triggered on the collection
+            let todo = new app.Todo({ title: todo_title });
+            app.todoList.add(todo);
             this.user_input.val(""); // clean input box
          },
       });
