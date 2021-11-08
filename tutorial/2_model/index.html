@@ -27,12 +27,12 @@
       /************************
        * Model 
        ************************/
-      app.Name = Backbone.Model.extend({
+      app.Hello = Backbone.Model.extend({
          defaults: {
             name: ''
          },
       });
-      app.name = new app.Name();
+      app.hello = new app.Hello();
 
       /********
        * View
@@ -41,8 +41,8 @@
       app.HelloView = Backbone.View.extend({
          el: "#greet",
          initialize: function () {
-            app.name.on('change', function(name){
-               this.$el.text(this.$el.text() + name.get('name'));
+            app.hello.on('change', function(name){
+               this.$el.html("Hello" + name.get('name'));
             }, this);
          }
       });
@@ -59,7 +59,7 @@
          },
          clickAction: function (e) {
             index++;
-            app.name.set('name', index.toString());
+            app.hello.set('name', index.toString());
          },
       });
       app.appView = new app.AppView();
