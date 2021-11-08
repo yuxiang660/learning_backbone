@@ -65,11 +65,10 @@
             this.model.on('remove', this.remove, this); // remove: Convenience Backbone's function for removing the view from the DOM.
          },
          events: {
-            'click #remove': 'remove'
+            'click #remove': function() {
+               app.todoList.remove(this.model); // remove the model in the collection
+            }
          },
-         remove: function () {
-            app.todoList.remove(this.model); // remove the model in the collection
-         }
       });
 
       // Add TodoView to TodoListView when a model is added to the collection
